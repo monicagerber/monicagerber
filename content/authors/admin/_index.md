@@ -1,49 +1,41 @@
 ---
-bio: My research interests include distributed robotics, mobile computing and programmable
-  matter.
+<!-- bio: My research interests include distributed robotics, mobile computing and programmable
+  matter. -->
 education:
   courses:
-  - course: PhD in Artificial Intelligence
-    institution: Stanford University
-    year: 2012
-  - course: MEng in Artificial Intelligence
-    institution: Massachusetts Institute of Technology
-    year: 2009
-  - course: BSc in Artificial Intelligence
-    institution: Massachusetts Institute of Technology
-    year: 2008
+  - course: MPH in Biostatistics and Epidemiology
+    institution: Boston University
+  - course: BA Anthropology
+    institution: Reed College
 email: ""
 highlight_name: false
-interests:
-- Artificial Intelligence
-- Computational Linguistics
-- Information Retrieval
-organizations:
-- name: Stanford University
-  url: https://www.stanford.edu/
-role: Professor of Artificial Intelligence
+Interests:
+- Data analysis
+- Reproducibility
+- Open science
+role: Data Scientist in Public Health
 social:
-- icon: envelope
-  icon_pack: fas
-  link: /#contact
 - icon: twitter
   icon_pack: fab
-  link: https://twitter.com/GeorgeCushen
-- icon: graduation-cap
-  icon_pack: fas
-  link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
+  link: https://twitter.com/mwgerber
+- icon: orcid
+  icon_pack: fab
+  link: https://orcid.org/0000-0001-9878-9166
 - icon: github
   icon_pack: fab
-  link: https://github.com/gcushen
+  link: https://github.com/monicagerber
 - icon: linkedin
   icon_pack: fab
-  link: https://www.linkedin.com/
+  link: https://www.linkedin.com/in/monica-gerber/
 superuser: true
-title: Nelson Bighetti
+title: Monica Gerber
+user_groups:
+- Principal Investigators
 ---
 
-Nelson Bighetti is a professor of artificial intelligence at the Stanford AI Lab. His research interests include distributed robotics, mobile computing and programmable matter. He leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+I'm a statistical research associate at Fred Hutch in the Vaccine Immunology Statistical Center ([VISC](https://www.cavd.org/grantees/Pages/Grantee-Gottardo.aspx)) where I analyze data for pre-clinical and early clinical trials for vaccines. Previously I was a biostatistician at Massachusetts General Hospital in Boston, MA.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+I am co-organizer of [R-Ladies Seattle](https://rladiesseattle.org/) and a certified instructor with [The Carpentries](https://carpentries.org/).
 
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "media/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
+<!-- {{< icon name="download" pack="fas" >}} Download my {{< staticref "media/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}. -->
+
