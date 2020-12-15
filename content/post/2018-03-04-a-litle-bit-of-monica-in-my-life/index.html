@@ -1,0 +1,565 @@
+---
+title: A litle bit of Monica in my life
+author: Monica Gerber
+date: '2018-03-04'
+slug: a-litle-bit-of-monica-in-my-life
+categories: []
+tags:
+  - about me
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2018-03-04'
+featured: yes
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<p>One analysis in the R community that caught my attention is Hilary Parker’s analysis of <a href="https://hilaryparker.com/2013/01/30/hilary-the-most-poisoned-baby-name-in-us-history/">the most poisoned baby name in US history</a>. I was surprised that my own name didn’t show up in the analysis. If Hilary had a huge loss in 1993, what happened to Monica in 1999?</p>
+<p>For a period when I was a kid the name ‘Monica’ is what made the adults turn down the NPR broadcast. Its entrance into popular culture due to the <a href="https://twitter.com/MonicaLewinsky/status/935600676184477696">Clinton Impeachment</a>, a shoutout in <a href="https://www.youtube.com/watch?v=EK_LN3XEcnw">Mambo No. 5</a>, and also being name of the the least likable roommate on Friends (#bossy)<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, wasn’t exactly the kind of material that was going to make me cool.</p>
+<p>But now I am fond of my name again and I’m also looking back on that cultural moment with a new lens thanks to Monica Lewinsky’s awesome <a href="https://www.ted.com/talks/monica_lewinsky_the_price_of_shame">talk</a> and <a href="https://www.vanityfair.com/news/2018/02/monica-lewinsky-in-the-age-of-metoo">essay</a>. Still, with the <code>babynames</code> package on CRAN, I had to take a look at where ‘Monica’ falls on the poisoned names list.</p>
+<div id="one-two-three-four-five" class="section level1">
+<h1>🎙 One, two, three, four, five 🎙</h1>
+<div id="the-babynames-package" class="section level2">
+<h2>The <code>babynames</code> package</h2>
+<p>Since Hilary conducted her analysis, it’s much easier to get the baby names data because it is now available as a package on CRAN. The data frame includes the year, sex, name, and frequency of the name. It also includes the proportion, <code>prop</code>, of people of that gender and name born in that year. One other difference is that we can now calculate the relative risk using the <a href="https://www.tidyverse.org/">tidyverse</a>.</p>
+<pre class="r"><code>library(babynames)
+head(babynames)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##    year sex   name          n   prop
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;dbl&gt;
+## 1  1880 F     Mary       7065 0.0724
+## 2  1880 F     Anna       2604 0.0267
+## 3  1880 F     Emma       2003 0.0205
+## 4  1880 F     Elizabeth  1939 0.0199
+## 5  1880 F     Minnie     1746 0.0179
+## 6  1880 F     Margaret   1578 0.0162</code></pre>
+<pre class="r"><code>str(babynames)</code></pre>
+<pre><code>## tibble [1,924,665 × 5] (S3: tbl_df/tbl/data.frame)
+##  $ year: num [1:1924665] 1880 1880 1880 1880 1880 1880 1880 1880 1880 1880 ...
+##  $ sex : chr [1:1924665] &quot;F&quot; &quot;F&quot; &quot;F&quot; &quot;F&quot; ...
+##  $ name: chr [1:1924665] &quot;Mary&quot; &quot;Anna&quot; &quot;Emma&quot; &quot;Elizabeth&quot; ...
+##  $ n   : int [1:1924665] 7065 2604 2003 1939 1746 1578 1472 1414 1320 1288 ...
+##  $ prop: num [1:1924665] 0.0724 0.0267 0.0205 0.0199 0.0179 ...</code></pre>
+<p>In Hilary’s analysis she looked at the top 1000 names in a given year, so I will follow that methodology.</p>
+</div>
+<div id="data-wrangling" class="section level2">
+<h2>Data wrangling</h2>
+<p>First I will limit the data set to the top 1000 names in a year and then calculate the relative risk and percentage loss.</p>
+<p>As Hilary explains in her post, the relative risk is a measure used to compare proportions. In public health we use it to compare the proportion of people who get a disease who were <em>exposed</em> to something to the proportion of people who get a disease who were <em>unexposed</em> to something. For example, if 10 out of 100 people (10%) who get a flu shot end up getting the flu in a given year, and 15 out of 100 people (15%) who don’t get a flu show end up getting the flu in a given year, then we can divide .10 by .15 to get the relative risk of 0.67. This means that people who get the flu shot have 0.67 times the risk of getting the flu compared to those who don’t get the flu shot. In Hilary’s analysis, she calculates the relative risk as a loss percent to help us think of it as a decrease. In the flu example, the loss percent would be (1-0.67)*100 = 33% less likely.</p>
+<p>Here’s how we can calculate this in the tidyverse.</p>
+<pre class="r"><code>library(tidyverse)
+
+top1000 &lt;- babynames %&gt;%
+  group_by(sex, year) %&gt;%
+  arrange(desc(n)) %&gt;%
+  mutate(rank = row_number()) %&gt;%
+  filter(rank &lt;= 1000) %&gt;%
+  group_by(sex, name) %&gt;%
+  arrange(year) %&gt;%
+  mutate(relrisk = prop/lag(prop),
+         loss_pct = (1-relrisk)*100)</code></pre>
+<p>The only problem with doing it like this is that if there are gaps that the name made it in the top 1000, the calculation is off. For example, look at the name Aarush. Aarush was in the top 1000 in 2010, then dipped below the top 1000 in 2011 to 2014, and then back in the top 1000 in 2015.</p>
+<pre class="r"><code>library(knitr)
+
+top1000 %&gt;%
+  filter(name == &quot;Aarush&quot;) %&gt;%
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="left">sex</th>
+<th align="left">name</th>
+<th align="right">n</th>
+<th align="right">prop</th>
+<th align="right">rank</th>
+<th align="right">relrisk</th>
+<th align="right">loss_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="left">M</td>
+<td align="left">Aarush</td>
+<td align="right">227</td>
+<td align="right">0.0001106</td>
+<td align="right">900</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="left">M</td>
+<td align="left">Aarush</td>
+<td align="right">211</td>
+<td align="right">0.0001035</td>
+<td align="right">974</td>
+<td align="right">0.9358163</td>
+<td align="right">6.418369</td>
+</tr>
+</tbody>
+</table>
+<p>Ok, let’s try this again.</p>
+<pre class="r"><code>top1000 &lt;- babynames %&gt;%
+  group_by(sex, year) %&gt;%
+  arrange(desc(n)) %&gt;%
+  mutate(rank = row_number()) %&gt;%
+  filter(rank &lt;= 1000) %&gt;%
+  group_by(sex, name) %&gt;%
+  arrange(year) %&gt;%
+  mutate(relrisk = ifelse(year == lag(year)+1, prop/lag(prop), NA),
+         loss_pct = (1-relrisk)*100) %&gt;%
+  ungroup()</code></pre>
+<p>It works!</p>
+<pre class="r"><code>top1000 %&gt;%
+  group_by(sex, name) %&gt;%
+  filter(year != lag(year)+1) %&gt;%
+  arrange(name, year, sex)</code></pre>
+<pre><code>## # A tibble: 13,573 x 8
+## # Groups:   sex, name [4,213]
+##     year sex   name       n      prop  rank relrisk loss_pct
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+##  1  2017 M     Aaden    240 0.000122    888      NA       NA
+##  2  2015 M     Aarush   211 0.000104    974      NA       NA
+##  3  1882 M     Ab         5 0.0000410   943      NA       NA
+##  4  1885 M     Ab         6 0.0000518   836      NA       NA
+##  5  1887 M     Ab         5 0.0000457   921      NA       NA
+##  6  1890 M     Abb        6 0.0000501   884      NA       NA
+##  7  1891 M     Abbie      5 0.0000458   964      NA       NA
+##  8  1937 F     Abbie     52 0.0000472   964      NA       NA
+##  9  1942 F     Abbie     65 0.0000468   968      NA       NA
+## 10  1957 F     Abbie    120 0.0000572   938      NA       NA
+## # … with 13,563 more rows</code></pre>
+</div>
+<div id="biggest-percent-drops" class="section level2">
+<h2>Biggest percent drops</h2>
+<p>OK, let’s see who has the biggest drops! Did I reproduce the list?</p>
+<pre class="r"><code>top1000 %&gt;%
+  arrange(desc(loss_pct)) %&gt;%
+  filter(sex == &quot;F&quot;) %&gt;%
+  filter(row_number() &lt;= 14) %&gt;%
+  select(name, loss_pct, year, n) %&gt;%
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">name</th>
+<th align="right">loss_pct</th>
+<th align="right">year</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Farrah</td>
+<td align="right">78.08533</td>
+<td align="right">1978</td>
+<td align="right">332</td>
+</tr>
+<tr class="even">
+<td align="left">Dewey</td>
+<td align="right">74.43853</td>
+<td align="right">1899</td>
+<td align="right">24</td>
+</tr>
+<tr class="odd">
+<td align="left">Catina</td>
+<td align="right">73.58773</td>
+<td align="right">1974</td>
+<td align="right">329</td>
+</tr>
+<tr class="even">
+<td align="left">Khadijah</td>
+<td align="right">72.48679</td>
+<td align="right">1995</td>
+<td align="right">438</td>
+</tr>
+<tr class="odd">
+<td align="left">Deneen</td>
+<td align="right">71.88842</td>
+<td align="right">1965</td>
+<td align="right">421</td>
+</tr>
+<tr class="even">
+<td align="left">Hilary</td>
+<td align="right">70.19101</td>
+<td align="right">1993</td>
+<td align="right">343</td>
+</tr>
+<tr class="odd">
+<td align="left">Katina</td>
+<td align="right">69.31745</td>
+<td align="right">1974</td>
+<td align="right">765</td>
+</tr>
+<tr class="even">
+<td align="left">Renata</td>
+<td align="right">69.02648</td>
+<td align="right">1981</td>
+<td align="right">224</td>
+</tr>
+<tr class="odd">
+<td align="left">Iesha</td>
+<td align="right">68.91567</td>
+<td align="right">1992</td>
+<td align="right">581</td>
+</tr>
+<tr class="even">
+<td align="left">Clementine</td>
+<td align="right">68.82256</td>
+<td align="right">1881</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">Minna</td>
+<td align="right">67.88056</td>
+<td align="right">1883</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">Ashanti</td>
+<td align="right">67.84702</td>
+<td align="right">2003</td>
+<td align="right">962</td>
+</tr>
+<tr class="odd">
+<td align="left">Infant</td>
+<td align="right">67.48330</td>
+<td align="right">1991</td>
+<td align="right">187</td>
+</tr>
+<tr class="even">
+<td align="left">Tennille</td>
+<td align="right">66.79955</td>
+<td align="right">1978</td>
+<td align="right">141</td>
+</tr>
+</tbody>
+</table>
+<p>These rankings are <em>slightly</em> different than Hilary’s but pretty darn close! I think the difference comes from the fact that I didn’t round the loss percent. Close enough!</p>
+</div>
+</div>
+<div id="jump-up-and-down-and-move-it-all-around" class="section level1">
+<h1>🎺 Jump up and down and move it all around 🎺</h1>
+<p>So where does <em>Monica</em> stand? Let’s take a look at its loss percent compared to the other names.</p>
+<div id="finding-monica-in-babynames" class="section level2">
+<h2>Finding Monica in <code>babynames</code></h2>
+<p>First I filtered the data set to see how the loss percent for Monica compares to the list of the top poisoned names.</p>
+<pre class="r"><code>top1000 %&gt;%
+  filter(name == &quot;Monica&quot;) %&gt;%
+  select(name, year, loss_pct, n) %&gt;%
+  arrange(desc(loss_pct)) </code></pre>
+<pre><code>## # A tibble: 136 x 4
+##    name    year loss_pct     n
+##    &lt;chr&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+##  1 Monica  1999     34.2  2133
+##  2 Monica  1902     32.0    33
+##  3 Monica  1998     24.7  3229
+##  4 Monica  1914     21.8   156
+##  5 Monica  1899     18.9    30
+##  6 Monica  1919     18.3   178
+##  7 Monica  1888     18.0    13
+##  8 Monica  1918     17.3   223
+##  9 Monica  1936     17.1   273
+## 10 Monica  2013     16.8   597
+## # … with 126 more rows</code></pre>
+<p>Only a 34% loss for Monica in 1999 compared to 70% for Hilary in 1993 and 78% for Farrah in 1978.</p>
+</div>
+<div id="graphing-it" class="section level2">
+<h2>Graphing it</h2>
+<p>Let’s take a look at the names side by side using ggplot2.</p>
+<pre class="r"><code>top1000 %&gt;%
+  mutate(percent = prop*100) %&gt;%
+  filter(name == &quot;Monica&quot; | name == &quot;Hilary&quot; | name == &quot;Hillary&quot;) %&gt;%
+  ggplot(aes(year, percent, colour = name)) +
+  geom_line() +
+  labs(title = &quot;Percent of girls given the name Hilary/Hillary or Monica over time&quot;,
+       y = &quot;Percent&quot;,
+       x = &quot;Year&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Wow, that really changes my perspective. Hilary may have the largest loss percent in a given year, but was the impact of the drop in Monica’s greater because there were more Monica’s to begin with? It’s hard to tell. It looks like there was already a downward trend after the 1970s, but that the trend started to level off in the 1990s (maybe Monica from Friends wasn’t so unpopular after all?!), before plummeting in ’98 and ’99.</p>
+</div>
+</div>
+<div id="and-if-it-looks-like-this-then-youre-doing-it-right" class="section level1">
+<h1>🎵 And if it looks like this then you’re doing it right 🎵</h1>
+<div id="the-risk-difference" class="section level2">
+<h2>The risk difference</h2>
+<p>In public health we use both the relative risk<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> and the risk difference. They provide two different perspectives on the same information, and the usefulness of each measure depends on what question you are hoping to answer<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. When the question is about the population-level <em>impact</em> of a factor on an outcome, then the risk difference is a more useful measure. When the question is about the <em>strength</em> of an association, the relative risk is the best option. The question about which baby name was the most poisoned–that is, which name had the <em>strongest</em> drop in popularity–is a question about the <em>strength</em> of an association.</p>
+<p>However, when I looked at the plot above, a new question came to mind: did the drop in the baby name Monica have a greater impact in terms of the overall number of babies being named in the 90s?</p>
+<p>In more detail, The <em>risk difference (RD)</em> is the difference in proportions. It tells us what the <em>excess risk</em> of disease is among those who have been exposed to something vs. those who have not been exposed. In a study on alcohol use and breast cancer<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, a 40-year-old woman has an absolute risk of 1.45 of developing breast cancer in the next 10 years. If she is a light drinker, this risk becomes 1.51 percent. The risk ratio is 1.51/1.45 = 1.04, or a 4% increase in risk, which seems like a non-negligible amount. However, the risk difference is 1.51-1.45 = 0.06, or an excess risk of .06 per 100. That’s 6 people for every 10,000 light drinkers, which is a pretty low population impact. When you put it in absolute terms, the RD brings a different perspective to certain types of risk.</p>
+</div>
+<div id="the-risk-difference-in-babynames" class="section level2">
+<h2>The risk difference in <code>babynames</code></h2>
+<p>What would the risk difference say about these poisoned names? I’ll calculate the risk differences in the babynames data set. In this analysis, we can think of the year as the “exposure” and the name as the “outcome.” We can then calculate the “risk” or probability of being named Monica in any given year compared to the prior year. To make this more interpretable, I also calculated the excess risk, or how many people were named Monica in a year per 10,000 people named compared to the previous year, by multiplying the risk difference by 10,000.</p>
+<pre class="r"><code>rds &lt;- top1000 %&gt;%
+  group_by(sex, name) %&gt;%
+  arrange(year) %&gt;%
+  mutate(riskdiff= ifelse(year == lag(year)+1, prop - lag(prop), NA),
+         excessrisk_per10000 = round(riskdiff*10000,1)) %&gt;%
+  ungroup()
+
+rds %&gt;%
+  filter(sex == &quot;F&quot;) %&gt;%
+  arrange(riskdiff) %&gt;%
+  filter(row_number() &lt;= 14) %&gt;%
+  select(year, name, n, relrisk, loss_pct, riskdiff, excessrisk_per10000) %&gt;%
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="left">name</th>
+<th align="right">n</th>
+<th align="right">relrisk</th>
+<th align="right">loss_pct</th>
+<th align="right">riskdiff</th>
+<th align="right">excessrisk_per10000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1937</td>
+<td align="left">Shirley</td>
+<td align="right">26816</td>
+<td align="right">0.7459047</td>
+<td align="right">25.409533</td>
+<td align="right">-0.0082912</td>
+<td align="right">-82.9</td>
+</tr>
+<tr class="even">
+<td align="right">1936</td>
+<td align="left">Shirley</td>
+<td align="right">35159</td>
+<td align="right">0.8372019</td>
+<td align="right">16.279809</td>
+<td align="right">-0.0063452</td>
+<td align="right">-63.5</td>
+</tr>
+<tr class="odd">
+<td align="right">1950</td>
+<td align="left">Linda</td>
+<td align="right">80432</td>
+<td align="right">0.8821419</td>
+<td align="right">11.785807</td>
+<td align="right">-0.0061105</td>
+<td align="right">-61.1</td>
+</tr>
+<tr class="even">
+<td align="right">1951</td>
+<td align="left">Linda</td>
+<td align="right">73972</td>
+<td align="right">0.8755442</td>
+<td align="right">12.445582</td>
+<td align="right">-0.0056921</td>
+<td align="right">-56.9</td>
+</tr>
+<tr class="odd">
+<td align="right">1985</td>
+<td align="left">Jennifer</td>
+<td align="right">42650</td>
+<td align="right">0.8238794</td>
+<td align="right">17.612060</td>
+<td align="right">-0.0049392</td>
+<td align="right">-49.4</td>
+</tr>
+<tr class="even">
+<td align="right">1952</td>
+<td align="left">Linda</td>
+<td align="right">67088</td>
+<td align="right">0.8807161</td>
+<td align="right">11.928385</td>
+<td align="right">-0.0047766</td>
+<td align="right">-47.8</td>
+</tr>
+<tr class="odd">
+<td align="right">1970</td>
+<td align="left">Lisa</td>
+<td align="right">38964</td>
+<td align="right">0.8326375</td>
+<td align="right">16.736249</td>
+<td align="right">-0.0042753</td>
+<td align="right">-42.8</td>
+</tr>
+<tr class="even">
+<td align="right">1957</td>
+<td align="left">Deborah</td>
+<td align="right">40070</td>
+<td align="right">0.8224526</td>
+<td align="right">17.754744</td>
+<td align="right">-0.0041239</td>
+<td align="right">-41.2</td>
+</tr>
+<tr class="odd">
+<td align="right">1954</td>
+<td align="left">Linda</td>
+<td align="right">55381</td>
+<td align="right">0.8757818</td>
+<td align="right">12.421825</td>
+<td align="right">-0.0039456</td>
+<td align="right">-39.5</td>
+</tr>
+<tr class="even">
+<td align="right">1958</td>
+<td align="left">Cynthia</td>
+<td align="right">31003</td>
+<td align="right">0.8008784</td>
+<td align="right">19.912163</td>
+<td align="right">-0.0037328</td>
+<td align="right">-37.3</td>
+</tr>
+<tr class="odd">
+<td align="right">1883</td>
+<td align="left">Mary</td>
+<td align="right">8012</td>
+<td align="right">0.9475668</td>
+<td align="right">5.243321</td>
+<td align="right">-0.0036927</td>
+<td align="right">-36.9</td>
+</tr>
+<tr class="even">
+<td align="right">1977</td>
+<td align="left">Amy</td>
+<td align="right">26731</td>
+<td align="right">0.8150250</td>
+<td align="right">18.497499</td>
+<td align="right">-0.0036882</td>
+<td align="right">-36.9</td>
+</tr>
+<tr class="odd">
+<td align="right">1938</td>
+<td align="left">Shirley</td>
+<td align="right">23769</td>
+<td align="right">0.8556230</td>
+<td align="right">14.437703</td>
+<td align="right">-0.0035140</td>
+<td align="right">-35.1</td>
+</tr>
+<tr class="even">
+<td align="right">1953</td>
+<td align="left">Linda</td>
+<td align="right">61275</td>
+<td align="right">0.9006528</td>
+<td align="right">9.934718</td>
+<td align="right">-0.0035037</td>
+<td align="right">-35.0</td>
+</tr>
+</tbody>
+</table>
+<p>So in absolute terms, the biggest drops were among names that have higher frequencies. The overall impact is greater. There is a decrease of 83 Shirley’s per 10,000 babies born in the year 1937 compared to the prior year. Sorry Shirley!</p>
+<p><img src="https://media.giphy.com/media/LTLiLcGWl5ula/giphy.gif" /></p>
+<p>Hilary/Hillary and Monica are nowhere near the top losses if we look at the risk difference.</p>
+<p>But what if we compare Hilary to Monica? Who has the biggest drop in absolute terms?</p>
+<pre class="r"><code>rds %&gt;%
+  filter(sex == &quot;F&quot;) %&gt;%
+  filter(name == &quot;Monica&quot; | name == &quot;Hilary&quot; | name == &quot;Hillary&quot;,
+         year &gt; 1990) %&gt;%
+  arrange(riskdiff) %&gt;%
+  filter(row_number() &lt;= 10) %&gt;%
+  select(year, name, n, riskdiff, excessrisk_per10000) %&gt;%
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="left">name</th>
+<th align="right">n</th>
+<th align="right">riskdiff</th>
+<th align="right">excessrisk_per10000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1993</td>
+<td align="left">Hillary</td>
+<td align="right">1064</td>
+<td align="right">-0.0007180</td>
+<td align="right">-7.2</td>
+</tr>
+<tr class="even">
+<td align="right">1999</td>
+<td align="left">Monica</td>
+<td align="right">2133</td>
+<td align="right">-0.0005702</td>
+<td align="right">-5.7</td>
+</tr>
+<tr class="odd">
+<td align="right">1998</td>
+<td align="left">Monica</td>
+<td align="right">3229</td>
+<td align="right">-0.0005462</td>
+<td align="right">-5.5</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="left">Hilary</td>
+<td align="right">343</td>
+<td align="right">-0.0004097</td>
+<td align="right">-4.1</td>
+</tr>
+<tr class="odd">
+<td align="right">1994</td>
+<td align="left">Hillary</td>
+<td align="right">408</td>
+<td align="right">-0.0003304</td>
+<td align="right">-3.3</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="left">Monica</td>
+<td align="right">3900</td>
+<td align="right">-0.0003101</td>
+<td align="right">-3.1</td>
+</tr>
+<tr class="odd">
+<td align="right">1991</td>
+<td align="left">Monica</td>
+<td align="right">4156</td>
+<td align="right">-0.0001239</td>
+<td align="right">-1.2</td>
+</tr>
+<tr class="even">
+<td align="right">2000</td>
+<td align="left">Monica</td>
+<td align="right">1990</td>
+<td align="right">-0.0000984</td>
+<td align="right">-1.0</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="left">Monica</td>
+<td align="right">1613</td>
+<td align="right">-0.0000964</td>
+<td align="right">-1.0</td>
+</tr>
+<tr class="even">
+<td align="right">2001</td>
+<td align="left">Monica</td>
+<td align="right">1793</td>
+<td align="right">-0.0000920</td>
+<td align="right">-0.9</td>
+</tr>
+</tbody>
+</table>
+<p>And Hillary wins with an excess risk of -7.2 per 10,000 babies in 1993! In 1993, there were about 7 fewer babies named Hillary than in 1992 for every 10,000 babies born. It’s even larger if you combine Hilary and Hillary. Interestingly, Hi<strong>ll</strong>ary had a larger risk difference compared to Hi<strong>l</strong>ary in 1993. Using the risk ratio and risk difference, Hi<strong>l</strong>ary is the more poisoned name.</p>
+<p><img src="https://media.giphy.com/media/IdyHPMy8eqZ68/giphy.gif" /></p>
+<p>P.S. Seriously, watch this <a href="(https://www.ted.com/talks/monica_lewinsky_the_price_of_shame)">talk</a> or read this <a href="https://www.vanityfair.com/news/2018/02/monica-lewinsky-in-the-age-of-metoo">story</a> by Monica Lewinsky. It’s inspiring and adds a lot to current conversations about harassment and bullying.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>I’ll admit that I’ve never actually watched <em>Friends</em>, but this is the impression I got from random clips!<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>The relative risk is also referred to as the risk ratio or the cumulative incidence ratio in epidemiology. I know, why don’t we just stick to calling it one thing?!<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>The usefulness of these measures is often the source of a lot of confusion in the media when there are stories about the benefit of certain treatments and screenings, for example, the benefits of <a href="https://www.nytimes.com/2015/02/03/upshot/how-to-measure-a-medical-treatments-potential-for-harm.html">mammography</a> or the harms of <a href="https://www.nytimes.com/2017/11/10/upshot/health-alcohol-cancer-research.html">alcohol use</a> and <a href="https://www.nytimes.com/2017/12/10/upshot/birth-control-breast-cancer-risks.html">birth control</a>. One reason I love <a href="https://www.nytimes.com/section/upshot">The Upshot</a> is because they do an excellent job of explaining this to a non-epidemiologist audience.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://www.nytimes.com/2017/11/10/upshot/health-alcohol-cancer-research.html" class="uri">https://www.nytimes.com/2017/11/10/upshot/health-alcohol-cancer-research.html</a><a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
