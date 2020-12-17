@@ -2,20 +2,15 @@
 title: Hello, world!
 author: Monica Gerber
 date: '2018-01-29'
-slug: hello-world
-categories: []
-tags:
+categories:
   - about me
-subtitle: ''
-summary: ''
-authors: []
+slug: hello-world
 lastmod: '2018-01-29'
 featured: yes
 image:
   caption: ''
   focal_point: ''
   preview_only: no
-projects: []
 ---
 
 # About my work
