@@ -1,23 +1,19 @@
 ---
-title: A litle bit of Monica in my life
+title: A little bit of Monica in my life
 author: Monica Gerber
 date: '2018-03-04'
-slug: a-litle-bit-of-monica-in-my-life
-categories: []
-tags:
+categories:
   - about me
-subtitle: ''
-summary: ''
-authors: []
+tags:
+  - babynames
+slug: a-little-bit-of-monica-in-my-life
 lastmod: '2018-03-04'
 featured: yes
 image:
   caption: ''
   focal_point: ''
   preview_only: no
-projects: []
 ---
-
 
 One analysis in the R community that caught my attention is Hilary Parker's analysis of [the most poisoned baby name in US history](https://hilaryparker.com/2013/01/30/hilary-the-most-poisoned-baby-name-in-us-history/). I was surprised that my own name didn't show up in the analysis. If Hilary had a huge loss in 1993, what happened to Monica in 1999? 
 
