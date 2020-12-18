@@ -33,7 +33,7 @@ user_groups:
 - Principal Investigators
 ---
 
-I'm a statistical research associate at Fred Hutch in the Vaccine Immunology Statistical Center ([VISC](https://www.cavd.org/grantees/Pages/Grantee-Gottardo.aspx)) where I analyze data for pre-clinical and early clinical trials for vaccines. Previously I was a biostatistician at Massachusetts General Hospital in Boston, MA.
+I'm a statistical research associate at [Fred Hutch](https://www.fredhutch.org/en.html) in the [Vaccine Immunology Statistical Center](https://www.cavd.org/grantees/Pages/Grantee-Gottardo.aspx), located in Seattle, WA, where I analyze data for pre-clinical and early clinical trials for vaccines. Previously I was a biostatistician at Massachusetts General Hospital in Boston, MA.
 
 I am co-organizer of [R-Ladies Seattle](https://rladiesseattle.org/) and a certified instructor with [The Carpentries](https://carpentries.org/).
 
