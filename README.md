@@ -15,6 +15,3 @@ Here are some ideas to get you started:
 - ⚡ Fun fact: ...
 -->
 
-I’m a statistical research associate at Fred Hutch in the Vaccine Immunology Statistical Center, located in Seattle, WA, where I analyze data for pre-clinical and clinical trials for vaccines. Previously I was a biostatistician at Massachusetts General Hospital in Boston, MA.
-
-I'm also a co-organizer of R-Ladies Seattle and a certified instructor with The Carpentries.
