@@ -36,7 +36,7 @@ user_groups:
 
 I'm a data scientist and public health professional interested in using open source tools to understand and promote population health. I currently work in the [Data Science Lab](https://hutchdatascience.org) at Fred Hutchinson Cancer Center, where I lead the Translational Analytics Team. Previously, I was a statistician in Fred Hutch's [Vaccine Immunology Statistical Center](https://www.fredhutch.org/en/research/divisions/vaccine-infectious-disease-division/research/biostatistics-bioinformatics-and-epidemiology/statistical-center-for-hiv-aids-research-and-prevention.html) and at Massachusetts General Hospital's Department of Pediatrics.
 
-In my free time, you can find me rock climbing, bouldering, and volunteering with the Seattle [Mountaineers](https://www.mountaineers.org/).
+In my free time, you can find me rock climbing, riding a bike, and enjoying the great outdoors.
 
 <!-- {{< icon name="download" pack="fas" >}} Download my {{< staticref "media/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}. -->
 
