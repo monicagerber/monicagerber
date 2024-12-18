@@ -30,7 +30,7 @@ enableEmoji = true
 [params]
   orgName = "Monica Gerber"
   orgLocal = "Anywhere"
-  description = "My personal website."
+  description = "Monica Gerber's personal website."
   favicon = "/img/favicon.ico"
   logo = "/img/blogophonic-mark-dark.png"
   mainSections = ["blog", "project", "talk"]
