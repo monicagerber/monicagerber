@@ -5,7 +5,7 @@ action_type: text
 description: I'm a data scientist working to solve problems in healthcare and clinical research. 
 image_left: true
 images:
-- img/revoir.jpg
+- img/home.jpg
 show_action_link: true
 show_social_links: true
 subtitle: Data Scientist
