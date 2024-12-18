@@ -1,5 +1,6 @@
 ---
 title: Solving the lonely data scientist problem
+layout: single-sidebar
 author: Monica Gerber
 format: hugo
 date: '2024-12-17'
@@ -9,8 +10,7 @@ categories:
 tags: 
   - Open science
   - Openscapes
-layout:
-  - single-sidebar
+
 ---
 
 There is a well documented problem across statisticians, data scientists, and data analysts. Whether they are an [isolated data scientist](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375985) or are embedded on a team of statisticians, they tend to do their [work alone](https://www.ethanrosenthal.com/2023/01/10/data-scientists-alone/?utm_source=vicki&utm_medium=email&utm_campaign=write-code-with-your-alphabet-radio-on). Even if your team is using git and GitHub, it doesn't mean that people are reading each other's code.

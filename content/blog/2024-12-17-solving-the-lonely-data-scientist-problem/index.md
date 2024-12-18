@@ -1,5 +1,6 @@
 ---
 title: Solving the lonely data scientist problem
+layout: single-sidebar
 author: Monica Gerber
 format: hugo
 date: '2024-12-17'
@@ -9,8 +10,6 @@ categories:
 tags:
   - Open science
   - Openscapes
-layout:
-  - single-sidebar
 ---
 
 
