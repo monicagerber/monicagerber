@@ -4,8 +4,12 @@ author: Monica Gerber
 format: hugo
 date: '2024-12-17'
 slug: []
-categories: []
-tags: []
+categories: 
+  - Code review
+tags: 
+  - Open science
+  - Openscapes
+layout: single-sidebar
 ---
 
 
