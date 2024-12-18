@@ -20,7 +20,7 @@ sidebar:
   author: "Monica Gerber"
   text_link_label: Subscribe via RSS
   text_link_url: /index.xml
-  show_sidebar_adunit: true # show ad container
+  show_sidebar_adunit: false # show ad container
   tags_link: true
   categories_link: true
   series_link: true
