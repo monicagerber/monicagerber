@@ -21,7 +21,7 @@ sidebar:
   categories_link: true
   description: "A blog for thoughts on data science, public health, open science, leadership, and other musings."
   series_link: true
-  show_sidebar_adunit: true
+  show_sidebar_adunit: false
   tags_link: true
   text_link_label: Subscribe via RSS
   text_link_url: /index.xml
