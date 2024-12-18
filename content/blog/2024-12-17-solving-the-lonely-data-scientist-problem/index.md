@@ -4,12 +4,13 @@ author: Monica Gerber
 format: hugo
 date: '2024-12-17'
 slug: []
-categories: 
+categories:
   - Code review
-tags: 
+tags:
   - Open science
   - Openscapes
-layout: single-sidebar
+layout:
+  - single-sidebar
 ---
 
 
@@ -25,7 +26,7 @@ Code review is hard to implement because we tend to view it as a technical chang
 
 The Openscapes mindset teaches us different ways of working in teams to increase the speed at which we solve big problems. This is a much loftier goal than my own personal goal to decrease isolation in the workplace and improve team morale! But Openscapes showed me that part of my frustration of working in isolation was connected to the larger picture of moving forward from old approaches of working to an Open Science culture.
 
-Below, I dig into the friction I've observed when data science teams[^1] try to adopt code review, and how a socio-technical approach can move a team from a group of individuals struggling to move forward together, to a group that practices team science.
+Below, I dig into the friction I've observed when data science teams[^1] try to adopt [code review](https://se-radio.net/2020/02/episode-400-michaela-greiler-on-code-reviews/)[^2], and how a socio-technical approach can move a team from a group of individuals struggling to move forward together, to a group that practices team science.
 
 ## Friction #1: None of our training has taught us how to do this
 
@@ -78,3 +79,5 @@ Arriving at the trailhead brings a rush of energy, but at the same time feelings
 ![](images/trail.jpg)
 
 [^1]: I use "data science teams" and "statistical teams" interchangeably here.
+
+[^2]: By "code review" I am referring broadly to activities involving reading and reviewing code, from reading and reproducing an analysis notebook, to reviewing a pull request on a shared code repository or software package.
